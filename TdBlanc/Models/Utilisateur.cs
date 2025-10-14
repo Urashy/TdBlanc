@@ -8,7 +8,7 @@ using TdBlanc.Models.Repository;
 namespace TdBlanc.Models
 {
     [Table("T_E_UTILISATEUR_UTI")]
-    public class Utilisateur : IEntity, INamedEntity
+    public class Utilisateur
     {
         [Key]
         [Column("UTI_ID")]
@@ -35,9 +35,8 @@ namespace TdBlanc.Models
         public String? Ville { get; set; } = "Annecy";
 
         [InverseProperty(nameof(Commande.CommandeUtlisateurNavigation))]
-        [JsonIgnore] // Évite la sérialisation circulaire
+        [JsonIgnore]
         public virtual ICollection<Commande> Commandes { get; set; } = new List<Commande>();
 
-        public int Id => IdUtilisateur;
     }
 }

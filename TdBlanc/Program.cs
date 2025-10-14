@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using TdBlanc.Controllers;
+using System.Text.Json.Serialization;
 using TdBlanc.Models;
 using TdBlanc.Models.EntityFramework;
-using TdBlanc.Models.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,17 +24,18 @@ builder.Services.AddCors(options =>
         });
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddDbContext<CommandeBDContext>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-
-builder.Services.AddScoped<IRepository<Commande>, CommandeManager>();
-
-builder.Services.AddScoped<IRepository<Commande>>(sp => sp.GetRequiredService<IRepository<Commande>>());
 
 var app = builder.Build();
 

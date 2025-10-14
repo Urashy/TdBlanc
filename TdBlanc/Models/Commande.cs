@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace TdBlanc.Models
 {
     [Table("T_E_COMMANDE_COM")]
-    public class Commande : IEntity
+    public class Commande 
     {
         [Key]
         [Column("COM_ID")]
@@ -25,6 +25,5 @@ namespace TdBlanc.Models
         [JsonIgnore]
         public virtual Utilisateur? CommandeUtlisateurNavigation { get; set; }
 
-        public int Id => IdCommande;
     }
 }
