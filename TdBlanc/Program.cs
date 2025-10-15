@@ -4,6 +4,7 @@ using System;
 using System.Text.Json.Serialization;
 using TdBlanc.Models;
 using TdBlanc.Models.EntityFramework;
+using TdBlanc.Models.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+builder.Services.AddScoped<CommandeManager>();
 
 
 var app = builder.Build();
