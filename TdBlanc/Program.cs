@@ -39,6 +39,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<CommandeManager>();
 
+builder.Services.AddScoped<UtilisateurManager>();
 
 var app = builder.Build();
 

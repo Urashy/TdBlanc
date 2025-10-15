@@ -18,6 +18,8 @@ namespace TdBlanc.Mapper
 
             CreateMap<CommandeDTO, Commande>()
                 .ForMember(dest => dest.CommandeUtlisateurNavigation, opt => opt.Ignore());
+
+            CreateMap<Utilisateur, UtilisateurDTO>().ReverseMap();
         }
     }
 }
