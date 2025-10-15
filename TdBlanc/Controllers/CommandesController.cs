@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TdBlanc.Models;
-using TdBlanc.Models.EntityFramework;
+using TdBlanc.Models.DTO;
+using TdBlanc.Models.Repository;
 
 namespace TdBlanc.Controllers
 {
@@ -14,95 +10,110 @@ namespace TdBlanc.Controllers
     [ApiController]
     public class CommandesController : ControllerBase
     {
-        private readonly CommandeBDContext _context;
+        private readonly CommandeManager _manager;
+        private readonly IMapper _mapper;
 
-        public CommandesController(CommandeBDContext context)
+        public CommandesController(CommandeManager manager, IMapper mapper)
         {
-            _context = context;
+            _manager = manager;
+            _mapper = mapper;
         }
 
         // GET: api/Commandes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Commande>>> GetCommandes()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<IEnumerable<CommandeDTO>>> GetCommandes()
         {
-            return await _context.Commandes.ToListAsync();
+            var commandes = await _manager.GetAllAsync();
+            var commandesDTO = _mapper.Map<IEnumerable<CommandeDTO>>(commandes);
+            return Ok(commandesDTO);
         }
 
         // GET: api/Commandes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Commande>> GetCommande(int id)
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CommandeDTO>> GetCommande(int id)
         {
-            var commande = await _context.Commandes.FindAsync(id);
+            var commande = await _manager.GetByIdAsync(id);
 
             if (commande == null)
             {
                 return NotFound();
             }
 
-            return commande;
+            var commandeDTO = _mapper.Map<CommandeDTO>(commande);
+            return Ok(commandeDTO);
+        }
+
+        // GET: api/Commandes/article/NomArticle
+        [HttpGet("article/{nomArticle}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<CommandeDTO>> GetCommandeByArticle(string nomArticle)
+        {
+            var commande = await _manager.GetByKeyAsync(nomArticle);
+
+            if (commande == null)
+            {
+                return NotFound();
+            }
+
+            var commandeDTO = _mapper.Map<CommandeDTO>(commande);
+            return Ok(commandeDTO);
         }
 
         // PUT: api/Commandes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCommande(int id, Commande commande)
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> PutCommande(int id, CommandeDTO commandeDTO)
         {
-            if (id != commande.IdCommande)
+            if (id != commandeDTO.IdCommande)
             {
-                return BadRequest();
+                return BadRequest("L'ID de la commande ne correspond pas.");
             }
 
-            _context.Entry(commande).State = EntityState.Modified;
+            var commandeToUpdate = await _manager.GetByIdAsync(id);
+            if (commandeToUpdate == null)
+            {
+                return NotFound();
+            }
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CommandeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var commande = _mapper.Map<Commande>(commandeDTO);
+            await _manager.UpdateAsync(commandeToUpdate, commande);
 
             return NoContent();
         }
 
         // POST: api/Commandes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Commande>> PostCommande(Commande commande)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<CommandeDTO>> PostCommande(CommandeDTO commandeDTO)
         {
-            _context.Commandes.Add(commande);
-            await _context.SaveChangesAsync();
+            var commande = _mapper.Map<Commande>(commandeDTO);
+            await _manager.AddAsync(commande);
 
-            return CreatedAtAction("GetCommande", new { id = commande.IdCommande }, commande);
+            var createdCommandeDTO = _mapper.Map<CommandeDTO>(commande);
+            return CreatedAtAction(nameof(GetCommande), new { id = commande.IdCommande }, createdCommandeDTO);
         }
 
         // DELETE: api/Commandes/5
         [HttpDelete("{id}")]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> DeleteCommande(int id)
         {
-            var commande = await _context.Commandes.FindAsync(id);
+            var commande = await _manager.GetByIdAsync(id);
             if (commande == null)
             {
                 return NotFound();
             }
 
-            _context.Commandes.Remove(commande);
-            await _context.SaveChangesAsync();
-
+            await _manager.DeleteAsync(commande);
             return NoContent();
-        }
-
-        private bool CommandeExists(int id)
-        {
-            return _context.Commandes.Any(e => e.IdCommande == id);
         }
     }
 }
