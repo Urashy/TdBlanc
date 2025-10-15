@@ -1,4 +1,4 @@
-﻿namespace TdBlanc.Models.Repository
+﻿namespace TdBlanc.Models.Repository.Interfaces
 {
     public interface ISearchableRepository<TEntity, in TKey>
     {
