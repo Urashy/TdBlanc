@@ -10,7 +10,7 @@ namespace TdBlanc.Models.EntityFramework
     public partial class CommandeBDContext : DbContext
     {
         public DbSet<Commande> Commandes { get; set; }
-        public DbSet<Utilisateur> Utilisateurs { get; set; }
+        public DbSet<Animal> Animaux { get; set; }
 
         public CommandeBDContext()
         {
@@ -27,36 +27,20 @@ namespace TdBlanc.Models.EntityFramework
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Commande>(entity =>
+
+
+            modelBuilder.Entity<Animal>(entity =>
             {
-                entity.ToTable("T_E_COMMANDE_COM");
+                entity.ToTable("T_E_ANIMAL_ANI");
 
-                entity.HasKey(e => e.IdCommande);
+                entity.HasKey(e => e.IdAnnimal);
 
-                entity.Property(e => e.IdCommande)
-                      .ValueGeneratedOnAdd()
-                      .UseIdentityColumn();
-
-                // Configuration de la relation avec clé étrangère explicite
-                entity.HasOne(c => c.CommandeUtlisateurNavigation)
-                      .WithMany(u => u.Commandes)
-                      .HasForeignKey(c => c.UtilisateurId)  // AJOUT IMPORTANT
-                      .OnDelete(DeleteBehavior.Restrict)     // Changé de ClientSetNull à Restrict
-                      .HasConstraintName("FK_T_E_COMMANDE_COM_T_E_UTILISATEUR_UTI");
-            });
-
-            modelBuilder.Entity<Utilisateur>(entity =>
-            {
-                entity.ToTable("T_E_UTILISATEUR_UTI");
-
-                entity.HasKey(e => e.IdUtilisateur);
-
-                entity.Property(e => e.IdUtilisateur)
+                entity.Property(e => e.IdAnnimal)
                       .ValueGeneratedOnAdd()
                       .UseIdentityColumn();
             });
 
-            modelBuilder.HasDefaultSchema("public");
+                modelBuilder.HasDefaultSchema("public");
             OnModelCreatingPartial(modelBuilder);
         }
 

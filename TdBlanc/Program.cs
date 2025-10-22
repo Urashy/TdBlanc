@@ -37,9 +37,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-builder.Services.AddScoped<CommandeManager>();
-
-builder.Services.AddScoped<UtilisateurManager>();
+builder.Services.AddScoped<AnimalManager>();
 
 var app = builder.Build();
 

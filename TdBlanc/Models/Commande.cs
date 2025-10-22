@@ -17,13 +17,5 @@ namespace TdBlanc.Models
         [Column("COM_MONTANT")]
         public double Montant { get; set; }
 
-        [Column("UTI_ID")]
-        public int? UtilisateurId { get; set; }
-
-        [ForeignKey("UtilisateurId")]  // Modifié pour pointer vers UtilisateurId
-        [InverseProperty(nameof(Utilisateur.Commandes))]
-        [JsonIgnore]
-        public virtual Utilisateur? CommandeUtlisateurNavigation { get; set; }
-
     }
 }
