@@ -8,7 +8,7 @@ namespace TdBlanc.Models
     {
         [Key]
         [Column("ANI_ID")]
-        public int IdAnnimal { get; set; }
+        public int IdAnimal { get; set; }
 
         [Column("ANI_NOM")]
         public string? Nom { get; set; }

@@ -40,11 +40,11 @@ else
                     <td>@animal.DisplayReference</td>
                     <td>
                         <button class="btn btn-sm btn-warning"
-                                @onclick="() => viewModel.NavigateToEdit(animal.IdAnnimal)">
+                                @onclick="() => viewModel.NavigateToEdit(animal.IdAnimal)">
                             Modifier
                         </button>
                         <button class="btn btn-sm btn-danger ms-2"
-                                @onclick="() => viewModel.DeleteAnimalAsync(animal.IdAnnimal)">
+                                @onclick="() => viewModel.DeleteAnimalAsync(animal.IdAnimal)">
                             Supprimer
                         </button>
                     </td>

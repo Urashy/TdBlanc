@@ -71,7 +71,7 @@ namespace TdBlanc.Controllers
             await _manager.AddAsync(animal);
 
             var resultDTO = _mapper.Map<AnimalDTO>(animal);
-            return CreatedAtAction("GetAnimal", new { id = animal.IdAnnimal }, resultDTO);
+            return CreatedAtAction("GetAnimal", new { id = animal.IdAnimal }, resultDTO);
         }
 
         // DELETE: api/Animals/5

@@ -2,7 +2,7 @@
 {
     public class AnimalViewModel
     {
-        public int IdAnnimal { get; set; }
+        public int IdAnimal { get; set; }
         public string? Nom { get; set; }
         public double Poid { get; set; }
         public string? Reference { get; set; }

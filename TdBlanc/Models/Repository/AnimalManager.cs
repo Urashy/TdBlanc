@@ -24,7 +24,7 @@ namespace TdBlanc.Models.Repository
         public async Task<Animal?> GetByIdAsync(int id)
         {
             return await _context.Animaux
-                .FirstOrDefaultAsync(c => c.IdAnnimal == id);
+                .FirstOrDefaultAsync(c => c.IdAnimal == id);
         }
 
         public async Task<Animal?> GetByKeyAsync(string key)
@@ -43,7 +43,7 @@ namespace TdBlanc.Models.Repository
         {
             _context.Entry(entityToUpdate).State = EntityState.Detached;
 
-            entity.IdAnnimal = entityToUpdate.IdAnnimal;
+            entity.IdAnimal = entityToUpdate.IdAnimal;
             _context.Animaux.Update(entity);
 
             await _context.SaveChangesAsync();

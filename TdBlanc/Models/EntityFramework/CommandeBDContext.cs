@@ -32,9 +32,9 @@ namespace TdBlanc.Models.EntityFramework
             {
                 entity.ToTable("T_E_ANIMAL_ANI");
 
-                entity.HasKey(e => e.IdAnnimal);
+                entity.HasKey(e => e.IdAnimal);
 
-                entity.Property(e => e.IdAnnimal)
+                entity.Property(e => e.IdAnimal)
                       .ValueGeneratedOnAdd()
                       .UseIdentityColumn();
             });

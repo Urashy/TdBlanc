@@ -2,6 +2,7 @@
 {
     public class AnimalDTO
     {
+        public int IdAnimal { get; set; }
         public String? Nom { get; set; }
         public double Poid { get; set; }
         public string? Reference { get; set; }
