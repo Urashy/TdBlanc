@@ -8,9 +8,9 @@ namespace TdBlanc.Mapper
     {
         public MapperProfile()
         {
-        
-
-            CreateMap<Animal, AnimalDTO>().ReverseMap();
+            CreateMap<Animal, AnimalDTO>().ForMember(dest => dest.DisplayReference,
+                          opt => opt.MapFrom(src => src.DisplayReference))
+                .ReverseMap();
         }
     }
 }

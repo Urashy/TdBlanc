@@ -1,0 +1,65 @@
+﻿@page "/animals/edit/{id:int}"
+@using Front.ViewModels
+@rendermode InteractiveServer
+@inject AnimalService AnimalService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Modifier un Animal</PageTitle>
+
+<h1>Modifier un Animal</h1>
+
+@if (viewModel.Animal == null)
+{
+    <p><em>Chargement...</em></p>
+}
+else
+{
+    <EditForm Model="@viewModel.Animal" OnValidSubmit="HandleSubmit">
+        <div class="mb-3">
+            <label class="form-label">Nom</label>
+            <InputText class="form-control" @bind-Value="viewModel.Animal.Nom" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Poids (kg)</label>
+            <InputNumber class="form-control" @bind-Value="viewModel.Animal.Poid" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Référence</label>
+            <InputText class="form-control" @bind-Value="viewModel.Animal.Reference" />
+        </div>
+
+        <div class="mb-3 form-check">
+            <InputCheckbox class="form-check-input" @bind-Value="viewModel.Animal.IsPrivate" id="isPrivate" />
+            <label class="form-check-label" for="isPrivate">
+                Privé (masquer la référence)
+            </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <button type="button" class="btn btn-secondary ms-2" @onclick="viewModel.Cancel">Annuler</button>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private AnimalEditViewModel viewModel = default!;
+
+    protected override void OnInitialized()
+    {
+        viewModel = new AnimalEditViewModel(AnimalService, NavigationManager);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await viewModel.LoadAnimalAsync(Id);
+    }
+
+    private async Task HandleSubmit()
+    {
+        await viewModel.UpdateAnimalAsync();
+    }
+}

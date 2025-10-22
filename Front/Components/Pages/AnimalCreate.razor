@@ -1,0 +1,50 @@
+﻿@page "/animals/create"
+@using Front.ViewModels
+@rendermode InteractiveServer
+@inject AnimalService AnimalService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Ajouter un Animal</PageTitle>
+
+<h1>Ajouter un Animal</h1>
+
+<EditForm Model="@viewModel.Animal" OnValidSubmit="HandleSubmit">
+    <div class="mb-3">
+        <label class="form-label">Nom</label>
+        <InputText class="form-control" @bind-Value="viewModel.Animal.Nom" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Poids (kg)</label>
+        <InputNumber class="form-control" @bind-Value="viewModel.Animal.Poid" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Référence</label>
+        <InputText class="form-control" @bind-Value="viewModel.Animal.Reference" />
+    </div>
+
+    <div class="mb-3 form-check">
+        <InputCheckbox class="form-check-input" @bind-Value="viewModel.Animal.IsPrivate" id="isPrivate" />
+        <label class="form-check-label" for="isPrivate">
+            Privé (masquer la référence)
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Créer</button>
+    <button type="button" class="btn btn-secondary ms-2" @onclick="viewModel.Cancel">Annuler</button>
+</EditForm>
+
+@code {
+    private AnimalCreateViewModel viewModel = default!;
+
+    protected override void OnInitialized()
+    {
+        viewModel = new AnimalCreateViewModel(AnimalService, NavigationManager);
+    }
+
+    private async Task HandleSubmit()
+    {
+        await viewModel.CreateAnimalAsync();
+    }
+}

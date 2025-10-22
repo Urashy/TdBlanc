@@ -1,0 +1,69 @@
+﻿@page "/animals"
+@using Front.ViewModels
+@rendermode InteractiveServer
+@inject AnimalService AnimalService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Liste des Animaux</PageTitle>
+
+<h1>Liste des Animaux</h1>
+
+<button class="btn btn-primary mb-3" @onclick="viewModel.NavigateToCreate">
+    Ajouter un animal
+</button>
+
+@if (viewModel.Animals == null)
+{
+    <p><em>Chargement...</em></p>
+}
+else if (!viewModel.Animals.Any())
+{
+    <p><em>Aucun animal trouvé.</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom</th>
+                <th>Poids (kg)</th>
+                <th>Référence</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var animal in viewModel.Animals)
+            {
+                <tr>
+                    <td>@animal.Nom</td>
+                    <td>@animal.Poid</td>
+                    <td>@animal.DisplayReference</td>
+                    <td>
+                        <button class="btn btn-sm btn-warning"
+                                @onclick="() => viewModel.NavigateToEdit(animal.IdAnnimal)">
+                            Modifier
+                        </button>
+                        <button class="btn btn-sm btn-danger ms-2"
+                                @onclick="() => viewModel.DeleteAnimalAsync(animal.IdAnnimal)">
+                            Supprimer
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private AnimalsListViewModel viewModel = default!;
+
+    protected override void OnInitialized()
+    {
+        viewModel = new AnimalsListViewModel(AnimalService, NavigationManager);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await viewModel.LoadAnimalsAsync();
+    }
+}

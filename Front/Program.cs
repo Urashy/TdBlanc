@@ -1,4 +1,5 @@
 using Front.Components;
+using Front.Services;
 
 namespace Front
 {
@@ -8,11 +9,20 @@ namespace Front
         {
             var builder = WebApplication.CreateBuilder(args);
 
+
+            builder.Services.AddHttpClient<AnimalService>(client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7013/");
+            });
+
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
             var app = builder.Build();
+
+            // Configuration HttpClient pour l'API
+            
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

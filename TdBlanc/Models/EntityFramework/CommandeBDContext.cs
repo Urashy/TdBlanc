@@ -9,7 +9,6 @@ namespace TdBlanc.Models.EntityFramework
 {
     public partial class CommandeBDContext : DbContext
     {
-        public DbSet<Commande> Commandes { get; set; }
         public DbSet<Animal> Animaux { get; set; }
 
         public CommandeBDContext()

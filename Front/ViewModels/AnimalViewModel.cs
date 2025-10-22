@@ -1,8 +1,9 @@
-﻿namespace TdBlanc.Models.DTO
+﻿namespace Front.ViewModels
 {
-    public class AnimalDTO
+    public class AnimalViewModel
     {
-        public String? Nom { get; set; }
+        public int IdAnnimal { get; set; }
+        public string? Nom { get; set; }
         public double Poid { get; set; }
         public string? Reference { get; set; }
         public bool IsPrivate { get; set; }

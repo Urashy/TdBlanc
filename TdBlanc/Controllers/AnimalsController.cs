@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using TdBlanc.Models;
-using TdBlanc.Models.EntityFramework;
+using TdBlanc.Models.DTO;
+using TdBlanc.Models.Repository;
 
 namespace TdBlanc.Controllers
 {
@@ -14,95 +15,77 @@ namespace TdBlanc.Controllers
     [ApiController]
     public class AnimalsController : ControllerBase
     {
-        private readonly CommandeBDContext _context;
+        private readonly AnimalManager _manager;
+        private readonly IMapper _mapper;
 
-        public AnimalsController(CommandeBDContext context)
+        public AnimalsController(AnimalManager manager, IMapper mapper)
         {
-            _context = context;
+            _manager = manager;
+            _mapper = mapper;
         }
 
         // GET: api/Animals
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Animal>>> GetAnimaux()
+        public async Task<ActionResult<IEnumerable<AnimalDTO>>> GetAnimaux()
         {
-            return await _context.Animaux.ToListAsync();
+            var animals = await _manager.GetAllAsync();
+            return Ok(_mapper.Map<IEnumerable<AnimalDTO>>(animals));
         }
 
         // GET: api/Animals/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Animal>> GetAnimal(int id)
+        public async Task<ActionResult<AnimalDTO>> GetAnimal(int id)
         {
-            var animal = await _context.Animaux.FindAsync(id);
+            var animal = await _manager.GetByIdAsync(id);
 
             if (animal == null)
             {
                 return NotFound();
             }
 
-            return animal;
+            return Ok(_mapper.Map<AnimalDTO>(animal));
         }
 
         // PUT: api/Animals/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutAnimal(int id, Animal animal)
+        public async Task<IActionResult> PutAnimal(int id, AnimalDTO animalDTO)
         {
-            if (id != animal.IdAnnimal)
+            var existingAnimal = await _manager.GetByIdAsync(id);
+
+            if (existingAnimal == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(animal).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!AnimalExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var animal = _mapper.Map<Animal>(animalDTO);
+            await _manager.UpdateAsync(existingAnimal, animal);
 
             return NoContent();
         }
 
         // POST: api/Animals
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Animal>> PostAnimal(Animal animal)
+        public async Task<ActionResult<AnimalDTO>> PostAnimal(AnimalDTO animalDTO)
         {
-            _context.Animaux.Add(animal);
-            await _context.SaveChangesAsync();
+            var animal = _mapper.Map<Animal>(animalDTO);
+            await _manager.AddAsync(animal);
 
-            return CreatedAtAction("GetAnimal", new { id = animal.IdAnnimal }, animal);
+            var resultDTO = _mapper.Map<AnimalDTO>(animal);
+            return CreatedAtAction("GetAnimal", new { id = animal.IdAnnimal }, resultDTO);
         }
 
         // DELETE: api/Animals/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAnimal(int id)
         {
-            var animal = await _context.Animaux.FindAsync(id);
+            var animal = await _manager.GetByIdAsync(id);
             if (animal == null)
             {
                 return NotFound();
             }
 
-            _context.Animaux.Remove(animal);
-            await _context.SaveChangesAsync();
-
+            await _manager.DeleteAsync(animal);
             return NoContent();
-        }
-
-        private bool AnimalExists(int id)
-        {
-            return _context.Animaux.Any(e => e.IdAnnimal == id);
         }
     }
 }
